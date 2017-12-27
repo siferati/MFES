@@ -17,12 +17,12 @@ operations
 	StackOverflow() == return self
 	post users = {};
 	
-	-- singleton - return the existent instance
+	--return the existent instance
 	public pure static getInstance: () ==> StackOverflow
 	getInstance() == return stackoverflow;
 	
 	
-	-- singleton - reset the instance
+	--reset the instance
 	public static clearInstance: () ==> StackOverflow
 	clearInstance() == (
 		stackoverflow := new StackOverflow();
@@ -30,7 +30,7 @@ operations
 	)
 	post RESULT.users = {};
 
-
+	--add user
 	public addUser: User ==> ()
 	addUser(user) == users := users union {user}
 	pre user not in set users

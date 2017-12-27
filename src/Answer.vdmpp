@@ -6,9 +6,9 @@ values
 instance variables
 	public text: seq1 of char := "";
 	public score: int := 0;
-	public author: User;
+	public author: [User];
 	
-	inv author <> {};
+	inv author <> nil;
 operations
 -- TODO Define operations here
 functions

@@ -7,8 +7,9 @@ instance variables
 	public text: seq1 of char := "";
 	public answers: set of Answer := {};
 	public score: int := 0;
-	public author: User ;
+	public author: [User];
 	
+	inv author <> nil;
 operations
 	
 	public addAnswer: Answer ==> ()
