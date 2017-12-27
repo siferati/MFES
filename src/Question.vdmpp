@@ -19,7 +19,7 @@ operations
 		author := user;
 		return self
 	)
-	pre user in set StackOverflow`getInstance().user
+	pre user in set StackOverflow`getInstance().users;
 	
 	
 	public addAnswer: Answer ==> ()
