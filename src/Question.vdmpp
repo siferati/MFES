@@ -4,13 +4,23 @@ types
 values
 	
 instance variables
+	public title: seq1 of char := "";
 	public text: seq1 of char := "";
 	public answers: set of Answer := {};
 	public score: int := 0;
 	public author: [User];
 	
 	inv author <> nil;
+	
 operations
+	
+	public Question: User ==> Question
+	Question(user) == (
+		author := user;
+		return self
+	)
+	pre user in set StackOverflow`getInstance().user
+	
 	
 	public addAnswer: Answer ==> ()
 	addAnswer(answer) == answers := answers union {answer}
