@@ -4,9 +4,38 @@ types
 values
 -- TODO Define values here
 instance variables
--- TODO Define instance variables here
+
+	public users: set of User := {};
+	
+	public questions: map seq1 of char to Question := {|->};
+	
+	private static stackoverflow: StackOverflow := new StackOverflow();
+	
 operations
--- TODO Define operations here
+
+	private StackOverflow: () ==> StackOverflow
+	StackOverflow() == return self
+	post users = {};
+	
+	-- singleton - return the existent instance
+	public pure static getInstance: () ==> StackOverflow
+	getInstance() == return stackoverflow;
+	
+	
+	-- singleton - reset the instance
+	public static clearInstance: () ==> StackOverflow
+	clearInstance() == (
+		stackoverflow := new StackOverflow();
+		return getInstance();
+	)
+	post RESULT.users = {};
+
+
+	public addUser: User ==> ()
+	addUser(user) == users := users union {user}
+	pre user not in set users
+	post users = users~ union {user};
+	
 functions
 -- TODO Define functiones here
 traces

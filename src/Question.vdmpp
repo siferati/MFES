@@ -4,10 +4,18 @@ types
 values
 	
 instance variables
+	public text: seq1 of char := "";
 	public answers: set of Answer := {};
 	public score: int := 0;
+	public author: User ;
+	
 operations
--- TODO Define operations here
+	
+	public addAnswer: Answer ==> ()
+	addAnswer(answer) == answers := answers union {answer}
+	pre answer not in set answers
+	post answers = answers~ union {answer};
+
 functions
 -- TODO Define functiones here
 traces
