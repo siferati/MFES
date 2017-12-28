@@ -1,0 +1,100 @@
+/**
+* This class is used for testing purposes.
+*
+* Commented lines are examples that break pre-conditions,
+* and therefore cannot be executed.
+*/
+class StackOverflowTest
+
+	instance variables
+	
+		stackOverflow: StackOverflow := new StackOverflow();
+		
+	
+	operations
+		
+		/**
+		* Check if something is true
+		*
+		* @pre Cond is true
+		*/
+		private assertTrue: bool ==> ()
+		assertTrue(cond) == (
+			return;
+		)
+		pre cond;
+		
+		
+		/**
+		* Test signup
+		*/
+		private testSignup: () ==> ()
+		testSignup() == (
+			
+			stackOverflow.clear();
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.signup("user2", "pass2");
+		 -- stackOverflow.signup("user1", "pass3");
+			
+			assertTrue(exists1 user in set stackOverflow.users & (
+				user.username = "user1" and
+				user.password = "pass1" and
+				user.id = User`nextid - 2
+			));
+			
+			assertTrue(exists1 user in set stackOverflow.users & (
+				user.username = "user2" and
+				user.password = "pass2" and
+				user.id = User`nextid - 1
+			));
+		);
+		
+		
+		/**
+		* Test login
+		*/
+		private testLogin: () ==> ()
+		testLogin() == (
+		
+			stackOverflow.clear();
+			assertTrue(stackOverflow.loggedUser = nil);
+			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+		 -- stackOverflow.login("user1", "pass2");
+			
+			assertTrue(
+				stackOverflow.loggedUser.username = "user1" and
+				stackOverflow.loggedUser.password = "pass1"
+			);
+		);
+		
+		
+		/**
+		* Run all tests
+		*/
+		public static main: () ==> ()
+		main() ==
+		(
+			dcl soTest: StackOverflowTest := new StackOverflowTest();
+			
+			IO`print("\n--- TESTING ---\n");
+			
+			IO`print("testSignup: ");
+			soTest.testSignup();
+			IO`print("Success!");
+			
+			IO`print("\ntestLogin: ");
+			soTest.testLogin();
+			IO`print("Success!");
+		
+			IO`print("\n--- TESTING ---\n");
+		);
+		
+	
+	traces -- this is used for the pretty UI, not for the combinatorial testing
+	
+		Signup: testSignup();
+		Login:	testLogin();
+		
+end StackOverflowTest
