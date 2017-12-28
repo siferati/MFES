@@ -1,27 +1,39 @@
+/**
+* This class represents an user
+*/
 class User
 
 	types
-	
+		
+		/** String */
 		public String = seq of char;
+		
+		/** User ID - starts at 1 */ 
 		public ID = nat1;
 	
 	
 	instance variables
 		
-		-- id of the next user
+		/** Id of the next user */
 		public static nextid: ID := 1;
 		
-		-- id of this user
+		/** Id of this user */
 		public id: ID;
 		
-		-- login fields
+		/** Username */
 		public username: String;
+		
+		/** Password */
 		public password: String;
 	
 	
 	operations
 		
-		-- Default constructor
+		/**
+		* Default Constructor
+		*
+		* @post User was created
+		*/
 		public User: () ==> User
 		User() == (
 		
@@ -34,9 +46,14 @@ class User
 		post (username = "" and password = "" and nextid = id + 1);
 		
 		
-		-- Constructor
-		-- @param name Username
-		-- @param pass Password
+		/**
+		* Constructor
+		*
+		* @param name Username
+		* @param pass Password
+		*
+		* @post User was created
+		*/
 		public User: String * String ==> User 
 		User(name, pass) == (
 		

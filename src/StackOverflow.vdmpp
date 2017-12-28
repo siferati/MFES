@@ -1,25 +1,36 @@
+/**
+* This class represents the Stack Overflow website
+*/
 class StackOverflow
 
 	types
-	
+		
+		/** String */
 		public String = seq of char;
 
 
 	instance variables
 		
-		-- List of existing users
+		/** List of existing users */
 		public users: set of User := {};
 		
-		-- List of existing questions
+		/** List of existing questions */
 		public questions: map seq1 of char to Question := {|->};
 		
 		-- o.O?
 		private static stackoverflow: StackOverflow := new StackOverflow();
+		
+		/** The user that's currently logged in */
+		public loggedUser: [User] := nil;
 	
 	
 	operations
 		
-		-- Default constructor
+		/**
+		* Default Constructor
+		*
+		* @post StackOverflow was created
+		*/
 		public StackOverflow: () ==> StackOverflow
 		StackOverflow() == (
 			return self;
@@ -27,9 +38,15 @@ class StackOverflow
 		post users = {};
 		
 		
-		-- Creates a new account (user)
-		-- @param username Username
-		-- @param password Password
+		/**
+		* Creates a new user
+		*
+		* @param username Username
+		* @param password Password
+		*
+		* @pre  Username is unique
+		* @post User was added to users' set
+		*/
 		public signup: String * String ==> ()
 		signup(username, password) == (
 			
@@ -38,7 +55,62 @@ class StackOverflow
 			
 			-- add user
 			users := users union {user};
+		)
+		pre  (
+			forall user in set users & user.username <> username
+		)
+		post (
+			card users = card users~ + 1 and
+			exists user in set users & (
+				user.username = username and
+				user.password = password and
+				user.id = User`nextid - 1
+		));
+		
+		
+		/**
+		* Logs in the user with the given username-password
+		*
+		* @param username Username
+		* @param password Password
+		*
+		* @pre  There isn't an user already logged in
+		* @pre  Username and password are a match
+		* @post User logged in
+		*/
+		public login: String * String ==> ()
+		login(username, password) == (
+			
+			for all user in set users do (
+				
+				if (user.username = username and user.password = password) then (
+					
+					loggedUser := user;
+				)
+			);
+		)
+		pre  (
+			loggedUser = nil and exists1 user in set users & (
+			user.username = username and
+			user.password = password
+		))
+		post (
+			loggedUser.username = username and
+			loggedUser.password = password
 		);
+		
+		
+		/**
+		* Resets this instance
+		*
+		* @post There are no users and no questions
+		*/
+		public clear: () ==> ()
+		clear() == (
+			users := {};
+			questions := {|->}
+		)
+		post (users = {} and questions = {|->});
 		
 		
 		-- Returns the existent instance
