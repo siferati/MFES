@@ -1,34 +1,40 @@
 class Question
-types
-	public String = seq of char;
-values
 	
-instance variables
-	public title: seq1 of char := "";
-	public text: seq1 of char := "";
-	public answers: set of Answer := {};
-	public score: int := 0;
-	public author: [User];
-	
-	inv author <> nil;
-	
-operations
-	
-	public Question: User ==> Question
-	Question(user) == (
-		author := user;
-		return self
-	)
-	pre user in set StackOverflow`getInstance().users;
-	
-	
-	public addAnswer: Answer ==> ()
-	addAnswer(answer) == answers := answers union {answer}
-	pre answer not in set answers
-	post answers = answers~ union {answer};
+	types
+		
+		public String = seq of char;
+		
+		
+	instance variables
+		
+		public title: seq1 of char := "";
+		public text: seq1 of char := "";
+		public answers: set of Answer := {};
+		public score: int := 0;
+		public author: [User];
+		
+		inv author <> nil;
+		
+		
+	operations
+		
+		-- Constructor
+		-- @param user Original Poster
+		public Question: User ==> Question
+		Question(user) == (
+			author := user;
+			return self
+		)
+		pre user in set StackOverflow`getInstance().users;
+		
+		
+		-- Adds an answer to this question
+		-- @param answer Answer to add
+		public addAnswer: Answer ==> ()
+		addAnswer(answer) == (
+			answers := answers union {answer}
+		)
+		pre answer not in set answers
+		post answers = answers~ union {answer};
 
-functions
--- TODO Define functiones here
-traces
--- TODO Define Combinatorial Test Traces here
 end Question

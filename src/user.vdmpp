@@ -1,16 +1,51 @@
 class User
-types
--- TODO Define types here
-values
--- TODO Define values here
-instance variables
-	public name: seq1 of char;
-	public static currId : int := 0;
-	public id : int := currId;
-operations
--- TODO Define operations here
-functions
--- TODO Define functiones here
-traces
--- TODO Define Combinatorial Test Traces here
+
+	types
+	
+		public String = seq of char;
+		public ID = nat1;
+	
+	
+	instance variables
+		
+		-- id of the next user
+		public static nextid: ID := 1;
+		
+		-- id of this user
+		public id: ID;
+		
+		-- login fields
+		public username: String;
+		public password: String;
+	
+	
+	operations
+		
+		-- Default constructor
+		public User: () ==> User
+		User() == (
+		
+			username := "";
+			password := "";
+			id := nextid;
+			nextid := nextid + 1;
+			return self;
+		)
+		post (username = "" and password = "" and nextid = id + 1);
+		
+		
+		-- Constructor
+		-- @param name Username
+		-- @param pass Password
+		public User: String * String ==> User 
+		User(name, pass) == (
+		
+			username := name;
+			password := pass;	
+			id := nextid;
+			nextid := nextid + 1;
+			return self;
+		)
+		post (username = name and password = pass and nextid = id + 1);
+		
 end User
