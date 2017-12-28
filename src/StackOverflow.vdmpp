@@ -58,8 +58,8 @@ class StackOverflow
 
 		
 		-- Add question
-		public addQuestion: seq1 of char * User ==> ()
-		addQuestion(name, user) == questions := questions munion {name |-> new Question(user)}
+		public addQuestion: seq1 of char * User * String * String ==> ()
+		addQuestion(name, user,title,text) == questions := questions munion {name |-> new Question(user,title,text)}
 		pre
 				-- each group name is unique
 				name not in set dom questions and
