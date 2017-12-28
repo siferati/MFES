@@ -20,9 +20,11 @@ class Question
 		
 		-- Constructor
 		-- @param user Original Poster
-		public Question: User ==> Question
-		Question(user) == (
+		public Question: User*String*String ==> Question
+		Question(user,title1,text1) == (
 			author := user;
+			title := title1;
+			text := text1;
 			return self
 		)
 		pre user in set StackOverflow`getInstance().users;
@@ -36,5 +38,12 @@ class Question
 		)
 		pre answer not in set answers
 		post answers = answers~ union {answer};
+		
+		-- Removes an answer from this question
+		-- @param answer Answer to remove
+		public removeAnswer: Answer ==> ()
+		removeAnswer(answer) == answers := answers \ {answer}
+		pre answer in set answers and card answers > 1
+		post answers = answers~ \ {answer};
 
 end Question

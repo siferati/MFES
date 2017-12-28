@@ -1,5 +1,10 @@
 class Answer
 
+	types
+		
+		public String = seq of char;
+		
+
 	instance variables
 	
 		public text: seq1 of char := "";
@@ -7,5 +12,17 @@ class Answer
 		public author: [User];
 		
 		inv author <> nil;
+		
+	operations
+		
+		-- Constructor
+		-- @param user Original Poster
+		public Answer: User*String ==> Answer
+		Answer(user,text1) == (
+			author := user;
+			text := text1;
+			return self
+		)
+		pre user in set StackOverflow`getInstance().users;
 	
 end Answer
