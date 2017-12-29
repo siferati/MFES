@@ -1,16 +1,35 @@
+/**
+* This class represents an answer
+*/
 class Answer
 
 	types
 		
+		/** String */
 		public String = seq of char;
+		
+		/** Answer ID - starts at 1 */
+		public ID = nat1;
 		
 
 	instance variables
 	
-		public text: seq1 of char := "";
+		/** Id of the next answer */
+		public static nextid: ID := 1;
+		
+		/** Id of this answer */
+		public id: ID;
+		
+		/** Text */
+		public text: String;
+		
+		/** Score */
 		public score: int := 0;
+		
+		/** Author */
 		public author: [User];
 		
+		/** Author can´t be null */
 		inv author <> nil;
 		
 	operations
@@ -25,9 +44,11 @@ class Answer
 		
 			author := new User();
 			text := " ";
+			id := nextid;
+			nextid := nextid + 1;
 			return self;
 		)
-		post (text = " ");
+		post (text = " " and nextid = id + 1);
 		
 		/**
 		* Constructor
@@ -41,8 +62,10 @@ class Answer
 		Answer(user,text1) == (
 			author := user;
 			text := text1;
+			id := nextid;
+			nextid := nextid + 1;
 			return self
 		)
-		pre user in set StackOverflow`getInstance().users;
+		post text = text1 and nextid = id + 1;
 	
 end Answer

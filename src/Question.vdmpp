@@ -1,18 +1,41 @@
+/**
+* This class represents a question
+*/
 class Question
 	
 	types
 		
+		/** String */
 		public String = seq of char;
+		
+		/** Question ID - starts at 1 */
+		public ID = nat1;
 		
 		
 	instance variables
 		
-		public title: seq1 of char := "";
-		public text: seq1 of char := "";
+		/** Id of the next question */
+		public static nextid: ID := 1;
+		
+		/** Id of this question */
+		public id: ID;
+		
+		/** Title */
+		public title: String;
+		
+		/** Text */
+		public text: String;
+		
+		/** List of answers */
 		public answers: set of Answer := {};
+		
+		/** Score */
 		public score: int := 0;
+		
+		/** Author */
 		public author: [User];
 		
+		/** Author can´t be null */
 		inv author <> nil;
 		
 		
@@ -29,9 +52,11 @@ class Question
 			author := new User();
 			title := " ";
 			text := " ";
+			id := nextid;
+			nextid := nextid + 1;
 			return self;
 		)
-		post (title = " " and text = " ");
+		post (title = " " and text = " " and nextid = id + 1);
 		
 		/**
 		* Constructor
@@ -48,10 +73,11 @@ class Question
 			author := user;
 			title := title1;
 			text := text1;
+			id := nextid;
+			nextid := nextid + 1;
 			return self
 		)
-		pre user in set StackOverflow`getInstance().users
-		post title = title1 and text = text1;
+		post title = title1 and text = text1 and nextid = id + 1;
 		
 		
 		/**
@@ -63,7 +89,7 @@ class Question
 		* @pre  Author exists
 		* @post Answers was added to questions' set
 		*/
-		public addAnswer: User * String ==> ()
+		public addAnswer: User * String ==> Answer
 		addAnswer(user, text) == (
 			
 			-- create question
@@ -71,6 +97,8 @@ class Question
 			
 			-- add question
 			answers := answers union {answer};
+			
+			return answer;
 		)
 		pre  (
 			forall answer in set answers & answer.author in set StackOverflow`getInstance().users

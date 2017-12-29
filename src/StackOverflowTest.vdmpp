@@ -10,6 +10,10 @@ class StackOverflowTest
 	
 		stackOverflow: StackOverflow := new StackOverflow();
 		
+		question1 : Question := new Question();
+		
+		answer1 : Answer := new Answer();
+		
 	
 	operations
 		
@@ -76,16 +80,18 @@ class StackOverflowTest
 		testAddQuestion() == (
 		
 			stackOverflow.clear();
-			assertTrue(stackOverflow.loggedUser = nil);
+			stackOverflow.loggedUser := nil;
+			
 			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","text1");
+			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","text1");
+			
 			
 			assertTrue(
-				stackOverflow.loggedUser.username = "user1" and
-				stackOverflow.loggedUser.password = "pass1"
+				question1 in set stackOverflow.questions
 			);
+			
 		);
 		
 		/**
@@ -94,16 +100,18 @@ class StackOverflowTest
 		private testAddAnswer: () ==> ()
 		testAddAnswer() == (
 		
-			--stackOverflow.clear();
-			--assertTrue(stackOverflow.loggedUser = nil);
+			stackOverflow.clear();
+			stackOverflow.loggedUser := nil;
 			
-			--stackOverflow.signup("user1", "pass1");
-			--stackOverflow.login("user1", "pass1");
-		 -- stackOverflow.login("user1", "pass2");
+			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","text1");
+			
+			answer1 := question1.addAnswer(stackOverflow.loggedUser,"text1");
 			
 			assertTrue(
-				stackOverflow.loggedUser.username = "user1" and
-				stackOverflow.loggedUser.password = "pass1"
+				answer1 in set question1.answers
 			);
 		);
 		
@@ -123,6 +131,14 @@ class StackOverflowTest
 			
 			IO`print("\ntestLogin: ");
 			soTest.testLogin();
+			IO`print("Success!");
+			
+			IO`print("\ntestAddQuestion: ");
+			soTest.testAddQuestion();
+			IO`print("Success!");
+			
+			IO`print("\ntestAddAnswer: ");
+			soTest.testAddAnswer();
 			IO`print("Success!");
 		
 			IO`print("\n--- TESTING ---\n");
