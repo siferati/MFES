@@ -69,6 +69,43 @@ class StackOverflowTest
 			);
 		);
 		
+		/**
+		* Test add Question
+		*/
+		private testAddQuestion: () ==> ()
+		testAddQuestion() == (
+		
+			stackOverflow.clear();
+			assertTrue(stackOverflow.loggedUser = nil);
+			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","text1");
+			
+			assertTrue(
+				stackOverflow.loggedUser.username = "user1" and
+				stackOverflow.loggedUser.password = "pass1"
+			);
+		);
+		
+		/**
+		* Test add Answer
+		*/
+		private testAddAnswer: () ==> ()
+		testAddAnswer() == (
+		
+			--stackOverflow.clear();
+			--assertTrue(stackOverflow.loggedUser = nil);
+			
+			--stackOverflow.signup("user1", "pass1");
+			--stackOverflow.login("user1", "pass1");
+		 -- stackOverflow.login("user1", "pass2");
+			
+			assertTrue(
+				stackOverflow.loggedUser.username = "user1" and
+				stackOverflow.loggedUser.password = "pass1"
+			);
+		);
 		
 		/**
 		* Run all tests

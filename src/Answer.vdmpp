@@ -15,8 +15,28 @@ class Answer
 		
 	operations
 		
-		-- Constructor
-		-- @param user Original Poster
+		/**
+		* Default Constructor
+		*
+		* @post Question was created
+		*/
+		public Answer: () ==> Answer
+		Answer() == (
+		
+			author := new User();
+			text := " ";
+			return self;
+		)
+		post (text = " ");
+		
+		/**
+		* Constructor
+		*
+		* @param user Original Poster
+		* @param String Text
+		*
+		* @pre author exists
+		*/
 		public Answer: User*String ==> Answer
 		Answer(user,text1) == (
 			author := user;

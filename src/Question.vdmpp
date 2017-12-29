@@ -18,8 +18,31 @@ class Question
 		
 	operations
 		
-		-- Constructor
-		-- @param user Original Poster
+		/**
+		* Default Constructor
+		*
+		* @post Question was created
+		*/
+		public Question: () ==> Question
+		Question() == (
+		
+			author := new User();
+			title := " ";
+			text := " ";
+			return self;
+		)
+		post (title = " " and text = " ");
+		
+		/**
+		* Constructor
+		
+		* @param user Original Poster
+		* @param String Title
+		* @param String Text
+		*
+		* @pre Author exists
+		* @post Question was created
+		*/
 		public Question: User*String*String ==> Question
 		Question(user,title1,text1) == (
 			author := user;
@@ -27,23 +50,36 @@ class Question
 			text := text1;
 			return self
 		)
-		pre user in set StackOverflow`getInstance().users;
+		pre user in set StackOverflow`getInstance().users
+		post title = title1 and text = text1;
 		
 		
-		-- Adds an answer to this question
-		-- @param answer Answer to add
-		public addAnswer: Answer ==> ()
-		addAnswer(answer) == (
-			answers := answers union {answer}
+		/**
+		* Creates a new Answer
+		*
+		* @param user Author
+		* @param text Text
+		*
+		* @pre  Author exists
+		* @post Answers was added to questions' set
+		*/
+		public addAnswer: User * String ==> ()
+		addAnswer(user, text) == (
+			
+			-- create question
+			dcl answer: Answer := new Answer(user, text);
+			
+			-- add question
+			answers := answers union {answer};
 		)
-		pre answer not in set answers
-		post answers = answers~ union {answer};
-		
-		-- Removes an answer from this question
-		-- @param answer Answer to remove
-		public removeAnswer: Answer ==> ()
-		removeAnswer(answer) == answers := answers \ {answer}
-		pre answer in set answers and card answers > 1
-		post answers = answers~ \ {answer};
+		pre  (
+			forall answer in set answers & answer.author in set StackOverflow`getInstance().users
+		)
+		post (
+			card answers = card answers~ + 1 and
+			exists answer in set answers & (
+				answer.author = user and
+				answer.text = text
+		));
 
 end Question

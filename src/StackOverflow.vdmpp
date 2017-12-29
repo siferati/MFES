@@ -15,7 +15,7 @@ class StackOverflow
 		public users: set of User := {};
 		
 		/** List of existing questions */
-		public questions: map seq1 of char to Question := {|->};
+		public questions: set of Question := {};
 		
 		-- o.O?
 		private static stackoverflow: StackOverflow := new StackOverflow();
@@ -108,19 +108,23 @@ class StackOverflow
 		public clear: () ==> ()
 		clear() == (
 			users := {};
-			questions := {|->}
+			questions := {}
 		)
-		post (users = {} and questions = {|->});
+		post (users = {} and questions = {});
 		
 		
-		-- Returns the existent instance
+		/**
+		* Returns the existent instance
+		*/
 		public pure static getInstance: () ==> StackOverflow
 		getInstance() == (
 			return stackoverflow;
 		);
 		
 		
-		-- Resets the instance
+		/**
+		* Resets the instance
+		*/
 		public static clearInstance: () ==> StackOverflow
 		clearInstance() == (
 			stackoverflow := new StackOverflow();
@@ -128,13 +132,35 @@ class StackOverflow
 		)
 		post RESULT.users = {};
 
-		
-		-- Add question
-		public addQuestion: seq1 of char * User * String * String ==> ()
-		addQuestion(name, user,title,text) == questions := questions munion {name |-> new Question(user,title,text)}
-		pre
-				-- each group name is unique
-				name not in set dom questions and
-				user in set users;
+
+		/**
+		* Creates a new question
+		*
+		* @param user Author
+		* @param title Title
+		* @param text Text
+		*
+		* @pre  Author exists
+		* @post Question was added to questions' set
+		*/
+		public addQuestion: User * String * String ==> ()
+		addQuestion(user, title, text) == (
+			
+			-- create question
+			dcl question: Question := new Question(user, title, text);
+			
+			-- add question
+			questions := questions union {question};
+		)
+		pre  (
+			forall question in set questions & question.author in set users
+		)
+		post (
+			card questions = card questions~ + 1 and
+			exists question in set questions & (
+				question.author = user and
+				question.title = title and
+				question.text = text
+		));
 
 end StackOverflow
