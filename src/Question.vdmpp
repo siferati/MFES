@@ -93,7 +93,7 @@ class Question
 		addAnswer(user, text) == (
 			
 			-- create question
-			dcl answer: Answer := new Answer(StackOverflow`getInstance().loggedUser, text);
+			dcl answer: Answer := new Answer(user, text);
 			
 			-- add question
 			answers := answers union {answer};
