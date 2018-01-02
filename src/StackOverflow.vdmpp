@@ -166,16 +166,8 @@ class StackOverflow
 		* @pre  Author exists
 		* @post Question was added to questions' set
 		*/
-		
-		/** TODO remove param loggedUser.
-		E suposto usares sempre a var loggedUser da StackOverflow,
-		por isso nao e preciso estares a passar um loggedUser como param do metodo,
-		ja tens acesso a ele, visto ser uma variavel da classe
-		Tambem tens de acrescentar a precondicao de o user estar loged in.
-		Ve como eu fiz os upvotes e tenta fazer igual sff
-		*/
-		public addQuestion: User * String * String ==> Question
-		addQuestion(loggedUser, title, text) == (
+		public addQuestion: String * String ==> Question
+		addQuestion(title, text) == (
 			
 			-- create question
 			dcl question: Question := new Question(loggedUser, title, text);
@@ -186,7 +178,9 @@ class StackOverflow
 			return question;
 		)
 		pre  (
-			forall question in set questions & question.author in set users
+			forall question in set questions & question.author in set users and
+			loggedUser <> nil
+
 		)
 		post (
 			card questions = card questions~ + 1 and

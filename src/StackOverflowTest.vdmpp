@@ -106,7 +106,7 @@ class StackOverflowTest
 			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","text1");
+			question1 := stackOverflow.addQuestion("title1","text1");
 			
 			
 			assertTrue(
@@ -127,7 +127,7 @@ class StackOverflowTest
 			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","text1");
+			question1 := stackOverflow.addQuestion("title1","text1");
 			
 			answer1 := question1.addAnswer(stackOverflow.loggedUser,"text1");
 			
@@ -147,7 +147,7 @@ class StackOverflowTest
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
 			
-			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			question1 := stackOverflow.addQuestion("title1","question1");
 			
 			answer1 := question1.addAnswer(stackOverflow.loggedUser,"answer1");
 			
@@ -170,7 +170,7 @@ class StackOverflowTest
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
 			
-			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			question1 := stackOverflow.addQuestion("title1","question1");
 			
 			answer1 := question1.addAnswer(stackOverflow.loggedUser,"answer1");
 			
@@ -193,7 +193,7 @@ class StackOverflowTest
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
 			
-			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			question1 := stackOverflow.addQuestion("title1","question1");
 			
 			answer1 := question1.addAnswer(stackOverflow.loggedUser,"answer1");
 			
@@ -220,7 +220,7 @@ class StackOverflowTest
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
 			
-			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			question1 := stackOverflow.addQuestion("title1","question1");
 			
 			stackOverflow.upvoteQuestion(1);
 		--  stackOverflow.upvoteAnswer(2);
@@ -241,7 +241,7 @@ class StackOverflowTest
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
 			
-			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			question1 := stackOverflow.addQuestion("title1","question1");
 			
 			stackOverflow.downvoteQuestion(1);
 		--  stackOverflow.downvoteAnswer(2);
@@ -262,7 +262,7 @@ class StackOverflowTest
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
 			
-			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			question1 := stackOverflow.addQuestion("title1","question1");
 			
 			stackOverflow.upvoteQuestion(1);
 			stackOverflow.downvoteQuestion(1);
