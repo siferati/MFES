@@ -109,9 +109,6 @@ class Question
 			
 			return answer;
 		)
-		pre  (
-			forall answer in set elems answers & answer.author in set StackOverflow`getInstance().users
-		)
 		post (
 			len answers = len answers~ + 1 and
 			exists answer in set elems answers & (

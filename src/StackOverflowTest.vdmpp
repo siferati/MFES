@@ -11,8 +11,9 @@ class StackOverflowTest
 		stackOverflow: StackOverflow := new StackOverflow();
 		
 		question1 : Question := new Question();
-		
+		question2 : Question := new Question();		
 		answer1 : Answer := new Answer();
+		num : nat;
 		
 	
 	operations
@@ -275,6 +276,33 @@ class StackOverflowTest
 			);
 		);
 		
+		/**
+		* Test showQuestionsAndAnswers
+		*/
+		private testShowQuestionsAndAnswers: () ==> ()
+		testShowQuestionsAndAnswers() == (
+		
+			stackOverflow.clear();			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			
+			question1 := stackOverflow.addQuestion("title1","question1");
+			
+			answer1 := question1.addAnswer(stackOverflow.loggedUser,"text1");
+			answer1 := question1.addAnswer(stackOverflow.loggedUser,"text2");
+			
+			stackOverflow.upvoteQuestion(1);
+			stackOverflow.upvoteAnswer(1);
+			stackOverflow.downvoteAnswer(2);
+			
+			num := stackOverflow.showQuestionsAndAnswers();
+			
+			assertTrue(
+				num = 3
+			);
+		);
+		
+		
 		
 		/**
 		* Run all tests
@@ -329,6 +357,11 @@ class StackOverflowTest
 			IO`print("\ntestUnvoteQuestion: ");
 			soTest.testUnvoteQuestion();
 			IO`print("Success!");
+			
+			IO`print("\ntestShowQuestionsAndAnswers: ");
+			soTest.testShowQuestionsAndAnswers();
+			IO`print("Success!");
+		
 		
 			IO`print("\n--- TESTING ---\n");
 		);

@@ -183,6 +183,7 @@ class StackOverflow
 
 		)
 		post (
+			loggedUser = loggedUser~ and
 			len questions = len questions~ + 1 and
 			exists question in set elems questions & (
 				question.author = loggedUser and
@@ -196,9 +197,9 @@ class StackOverflow
 		*
 		*
 		* @pre  At least one question exists
-		* @post 
+		* @post The user remains logged in and the questions seq remains the same
 		*/
-		public showQuestionsAndAnswers: () ==> ()
+		public showQuestionsAndAnswers: () ==> nat
 		showQuestionsAndAnswers() == (
 		
 		 dcl questionsTemp : seq of Question := questions;
@@ -208,6 +209,7 @@ class StackOverflow
 		 dcl i : nat := 0;
 		 dcl j : nat := 0;	 
 		 dcl num : nat1 := 1;
+		 dcl sum : nat := 0;
 		 
 		 while i < len questionsTemp do (
 		 		i := i + 1;
@@ -220,6 +222,7 @@ class StackOverflow
 				IO`print("): \n ");
 				IO`print(questionTemp.text);
 				IO`print("\n");
+				sum := sum + 1;
 				
 				answersTemp := questionTemp.answers;
 				num := 1;
@@ -234,14 +237,20 @@ class StackOverflow
 				IO`print("): ");
 				IO`print(answerTemp.text);
 				IO`print("\n");
+				sum := sum + 1;
 				
 				num := num + 1;
 				)
 		 );
 		 
+		 return sum;
 		)
 		pre (
 			len questions > 0
+		)
+		post (
+			questions = questions~ and
+			loggedUser = loggedUser~
 		);
 		
 		/**
