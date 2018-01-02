@@ -26,11 +26,21 @@ class Answer
 		/** Score */
 		public score: int := 0;
 		
+		/** Set of users that have upvoted this answer */
+		public upvoters: set of User := {};
+		
+		/** Set of users that have downvoted this answer */
+		public downvoters: set of User := {};
+		
 		/** Author */
 		public author: [User];
 		
-		/** Author can´t be null */
+		-- author cant be null
 		inv author <> nil;
+		
+		-- score is the sum of upvotes and downvotes
+		inv score = card upvoters - card downvoters;
+		
 		
 	operations
 		
@@ -50,6 +60,7 @@ class Answer
 		)
 		post (text = " " and nextid = id + 1);
 		
+		
 		/**
 		* Constructor
 		*
@@ -67,5 +78,141 @@ class Answer
 			return self
 		)
 		post text = text1 and nextid = id + 1;
+		
+		
+		/**
+		* Adds an upvote to this answer
+		*
+		* @param user User that upvoted this
+		*
+		* @pre  User hasn't upvoted this
+		* @post User upvoted this
+		* @post User hasn't downvoted this
+		* @post Score increased by one
+		*/
+		public upvote: User ==> ()
+		upvote(user) == (
+			
+			atomic (
+			
+				-- add user to set of voters
+				upvoters := upvoters union {user};
+				
+				-- update score
+				score := score + 1;
+			);
+			
+			if (user in set downvoters) then (
+			
+				atomic (
+				
+					-- remove user from set of downvoters
+					downvoters := downvoters \ {user};
+					
+					-- update score
+					score := score + 1;
+				);
+	
+			);			
+		)
+		pre  (
+			user not in set upvoters
+		)
+		post (
+			upvoters = upvoters~ union {user} and
+			downvoters = downvoters~ \ {user} and
+			score = card upvoters - card downvoters
+		);
+		
+		
+		/**
+		* Adds a downvote to this answer
+		*
+		* @param user User that downvoted this
+		*
+		* @pre  User hasn't downvoted this
+		* @post User downvoted this
+		* @post User hasn't upvoted this
+		* @post Score decreased by one
+		*/
+		public downvote: User ==> ()
+		downvote(user) == (
+			
+			atomic (
+				
+				-- add user to set of voters
+				downvoters := downvoters union {user};
+				
+				-- update score
+				score := score - 1;
+			);
+			
+			if (user in set upvoters) then (
+			
+				atomic (
+				
+					-- remove user from set of upvoters
+					upvoters := upvoters \ {user};
+				
+					-- update score
+					score := score - 1;
+				)
+			);			
+		)
+		pre  (
+			user not in set downvoters
+		)
+		post (
+			downvoters = downvoters~ union {user} and
+			upvoters = upvoters~ \ {user} and
+			score = card upvoters - card downvoters
+		);
+		
+		
+		/**
+		* Removes previously casted vote from this
+		*
+		* @param user User that unvoted this
+		*
+		* @pre  User has voted on this
+		* @post User hasn't upvoted this
+		* @post User hasn't downvoted this
+		* @post Score updated
+		*/
+		public unvote: User ==> ()
+		unvote(user) == (
+			
+			if (user in set upvoters) then (
+			
+				atomic (
+				
+					-- remove user from set of upvoters
+					upvoters := upvoters \ {user};
+				
+					-- update score
+					score := score - 1;
+				)
+			);
+			
+			if (user in set downvoters) then (
+			
+				atomic (
+				
+					-- remove user from set of downvoters
+					downvoters := downvoters \ {user};
+				
+					-- update score
+					score := score + 1;
+				)
+			);								
+		)
+		pre  (
+			user in set upvoters or user in set downvoters
+		)
+		post (
+			upvoters = upvoters~ \ {user} and
+			downvoters = downvoters~ \ {user} and
+			score = card upvoters - card downvoters
+		);
 	
 end Answer

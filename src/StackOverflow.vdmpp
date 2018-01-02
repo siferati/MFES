@@ -7,6 +7,9 @@ class StackOverflow
 		
 		/** String */
 		public String = seq of char;
+		
+		/** Identifier (start at 1) */ 
+		public ID = nat1;
 
 
 	instance variables
@@ -86,7 +89,7 @@ class StackOverflow
 				if (user.username = username and user.password = password) then (
 					
 					loggedUser := user;
-				)
+				);
 			);
 		)
 		pre  (
@@ -108,9 +111,14 @@ class StackOverflow
 		public clear: () ==> ()
 		clear() == (
 			users := {};
-			questions := {}
+			questions := {};
+			loggedUser := nil;
+			User`nextid := 1;
+			Answer`nextid := 1;
+			Question`nextid := 1;
+			
 		)
-		post (users = {} and questions = {});
+		post (users = {} and questions = {} and loggedUser = nil);
 		
 		
 		/**
@@ -143,6 +151,11 @@ class StackOverflow
 		* @pre  Author exists
 		* @post Question was added to questions' set
 		*/
+		
+		/** TODO remove param loggedUser.
+		E suposto usares sempre a var loggedUser da StackOverflow,
+		por isso nao e preciso estares a passar um loggedUser como param do metodo
+		*/
 		public addQuestion: User * String * String ==> Question
 		addQuestion(loggedUser, title, text) == (
 			
@@ -164,5 +177,206 @@ class StackOverflow
 				question.title = title and
 				question.text = text
 		));
+		
+		
+		/**
+		* Upvotes the given answer
+		*
+		* @param id Answer to upvote
+		*
+		* @pre  User is logged in
+		* @pre  Answer to upvote exists
+		* @post No changes were made to other answers
+		* @post User stays logged in
+		*/
+		public upvoteAnswer: ID ==> ()
+		upvoteAnswer(id) == (
+		
+			for all question in set questions do (
+				
+				for all answer in set question.answers do (
+					
+					if (answer.id = id) then (
+						
+						answer.upvote(loggedUser);
+					);
+				);
+			);
+		)
+		pre  (
+			loggedUser <> nil and
+			exists q in set questions & (
+				id in set {a.id | a in set q.answers}
+			)
+		)
+		post (
+			questions \ {q | q in set questions & id in set {a.id | a in set q.answers}} = questions~ \ {q | q in set questions~ & id in set {a.id | a in set q.answers}} and
+			loggedUser = loggedUser~
+		);
+		
+		
+		/**
+		* Downvotes the given answer
+		*
+		* @param id Answer to downvote
+		*
+		* @pre  User is logged in
+		* @pre  Answer to downvote exists
+		* @post No changes were made to other answers
+		* @post User stays logged in
+		*/
+		public downvoteAnswer: ID ==> ()
+		downvoteAnswer(id) == (
+		
+			for all question in set questions do (
+				
+				for all answer in set question.answers do (
+					
+					if (answer.id = id) then (
+						
+						answer.downvote(loggedUser);
+					);
+				);
+			);
+		)
+		pre  (
+			loggedUser <> nil and
+			exists q in set questions & (
+				id in set {a.id | a in set q.answers}
+			)
+		)
+		post (
+			questions \ {q | q in set questions & id in set {a.id | a in set q.answers}} = questions~ \ {q | q in set questions~ & id in set {a.id | a in set q.answers}} and
+			loggedUser = loggedUser~
+		);
+		
+		
+		/**
+		* Unvoted the given answer
+		*
+		* @param id Answer to unvote
+		*
+		* @pre  User is logged in
+		* @pre  Answer to unvote exists
+		* @post No changes were made to other answers
+		* @post User stays logged in
+		*/
+		public unvoteAnswer: ID ==> ()
+		unvoteAnswer(id) == (
+		
+			for all question in set questions do (
+				
+				for all answer in set question.answers do (
+					
+					if (answer.id = id) then (
+						
+						answer.unvote(loggedUser);
+					);
+				);
+			);
+		)
+		pre  (
+			loggedUser <> nil and
+			exists q in set questions & (
+				id in set {a.id | a in set q.answers}
+			)
+		)
+		post (
+			questions \ {q | q in set questions & id in set {a.id | a in set q.answers}} = questions~ \ {q | q in set questions~ & id in set {a.id | a in set q.answers}} and
+			loggedUser = loggedUser~
+		);
+		
+		
+		/**
+		* Upvotes the given question
+		*
+		* @param id Question to upvote
+		*
+		* @pre  User is logged in
+		* @pre  Question to upvote exists
+		* @post No changes were made to other questions
+		* @post User stays logged in
+		*/
+		public upvoteQuestion: ID ==> ()
+		upvoteQuestion(id) == (
+		
+			for all question in set questions do (
+				
+				if (question.id = id) then (
+					
+					question.upvote(loggedUser);
+				)
+			);
+		)
+		pre  (
+			loggedUser <> nil and
+			exists q in set questions & (q.id = id)
+		)
+		post (
+			questions \ {q | q in set questions & q.id = id} = questions~ \ {q | q in set questions~ & q.id = id} and
+			loggedUser = loggedUser~
+		);
+		
+		
+		/**
+		* Downvotes the given question
+		*
+		* @param id Question to downvote
+		*
+		* @pre  User is logged in
+		* @pre  Question to downvote exists
+		* @post No changes were made to other answers
+		* @post User stays logged in
+		*/
+		public downvoteQuestion: ID ==> ()
+		downvoteQuestion(id) == (
+		
+			for all question in set questions do (
+				
+				if (question.id = id) then (
+				
+					question.downvote(loggedUser);
+				)
+			);
+		)
+		pre  (
+			loggedUser <> nil and
+			exists q in set questions & (q.id = id)
+		)
+		post (
+			questions \ {q | q in set questions & q.id = id} = questions~ \ {q | q in set questions~ & q.id = id} and
+			loggedUser = loggedUser~
+		);
+		
+		
+		/**
+		* Unvotes the given question
+		*
+		* @param id Question to unvote
+		*
+		* @pre  User is logged in
+		* @pre  Question to unvote exists
+		* @post No changes were made to other questions
+		* @post User stays logged in
+		*/
+		public unvoteQuestion: ID ==> ()
+		unvoteQuestion(id) == (
+		
+			for all question in set questions do (
+				
+				if (question.id = id) then (
+					
+					question.unvote(loggedUser);
+				)
+			);
+		)
+		pre  (
+			loggedUser <> nil and
+			exists q in set questions & (q.id = id)
+		)
+		post (
+			questions \ {q | q in set questions & q.id = id} = questions~ \ {q | q in set questions~ & q.id = id} and
+			loggedUser = loggedUser~
+		);
 
 end StackOverflow

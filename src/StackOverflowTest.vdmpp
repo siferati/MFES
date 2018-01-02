@@ -115,6 +115,147 @@ class StackOverflowTest
 			);
 		);
 		
+		
+		/**
+		* Test upvoteAnswer
+		*/
+		private testUpvoteAnswer: () ==> ()
+		testUpvoteAnswer() == (
+		
+			stackOverflow.clear();			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			
+			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			
+			answer1 := question1.addAnswer(stackOverflow.loggedUser,"answer1");
+			
+			stackOverflow.upvoteAnswer(1);
+		--  stackOverflow.upvoteAnswer(2);
+			
+			assertTrue(
+				answer1.score = 1
+			);
+		);
+		
+		
+		/**
+		* Test voteAnswer
+		*/
+		private testDownvoteAnswer: () ==> ()
+		testDownvoteAnswer() == (
+		
+			stackOverflow.clear();			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			
+			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			
+			answer1 := question1.addAnswer(stackOverflow.loggedUser,"answer1");
+			
+			stackOverflow.downvoteAnswer(1);
+		--  stackOverflow.downvoteAnswer(2);
+			
+			assertTrue(
+				answer1.score = -1
+			);
+		);
+		
+		
+		/**
+		* Test unvoteAnswer
+		*/
+		private testUnvoteAnswer: () ==> ()
+		testUnvoteAnswer() == (
+		
+			stackOverflow.clear();			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			
+			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			
+			answer1 := question1.addAnswer(stackOverflow.loggedUser,"answer1");
+			
+			stackOverflow.upvoteAnswer(1);
+			stackOverflow.downvoteAnswer(1);
+			stackOverflow.upvoteAnswer(1);
+			
+			stackOverflow.unvoteAnswer(1);
+		--  stackOverflow.unvoteAnswer(2);
+			
+			assertTrue(
+				answer1.score = 0
+			);
+		);
+		
+		
+		/**
+		* Test upvoteQuestion
+		*/
+		private testUpvoteQuestion: () ==> ()
+		testUpvoteQuestion() == (
+		
+			stackOverflow.clear();			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			
+			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			
+			stackOverflow.upvoteQuestion(1);
+		--  stackOverflow.upvoteAnswer(2);
+			
+			assertTrue(
+				question1.score = 1
+			);
+		);
+		
+		
+		/**
+		* Test downvoteQuestion
+		*/
+		private testDownvoteQuestion: () ==> ()
+		testDownvoteQuestion() == (
+		
+			stackOverflow.clear();			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			
+			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			
+			stackOverflow.downvoteQuestion(1);
+		--  stackOverflow.downvoteAnswer(2);
+			
+			assertTrue(
+				question1.score = -1
+			);
+		);
+		
+		
+		/**
+		* Test unvoteQuestion
+		*/
+		private testUnvoteQuestion: () ==> ()
+		testUnvoteQuestion() == (
+		
+			stackOverflow.clear();			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			
+			question1 := stackOverflow.addQuestion(stackOverflow.loggedUser,"title1","question1");
+			
+			stackOverflow.upvoteQuestion(1);
+			stackOverflow.downvoteQuestion(1);
+			stackOverflow.upvoteQuestion(1);
+			
+			stackOverflow.unvoteQuestion(1);
+		--  stackOverflow.unvoteQuestion(2);
+			
+			assertTrue(
+				answer1.score = 0
+			);
+		);
+		
+		
 		/**
 		* Run all tests
 		*/
@@ -140,6 +281,30 @@ class StackOverflowTest
 			IO`print("\ntestAddAnswer: ");
 			soTest.testAddAnswer();
 			IO`print("Success!");
+			
+			IO`print("\ntestUpvoteAnswer: ");
+			soTest.testUpvoteAnswer();
+			IO`print("Success!");
+			
+			IO`print("\ntestDownvoteAnswer: ");
+			soTest.testDownvoteAnswer();
+			IO`print("Success!");		
+				
+			IO`print("\ntestUnvoteAnswer: ");
+			soTest.testUnvoteAnswer();
+			IO`print("Success!");
+			
+			IO`print("\ntestUpvoteQuestion: ");
+			soTest.testUpvoteQuestion();
+			IO`print("Success!");
+			
+			IO`print("\ntestDownvoteQuestion: ");
+			soTest.testDownvoteQuestion();
+			IO`print("Success!");
+			
+			IO`print("\ntestUnvoteQuestion: ");
+			soTest.testUnvoteQuestion();
+			IO`print("Success!");
 		
 			IO`print("\n--- TESTING ---\n");
 		);
@@ -148,6 +313,12 @@ class StackOverflowTest
 	traces -- this is used for the pretty UI, not for the combinatorial testing
 	
 		Signup: testSignup();
-		Login:	testLogin();
+		Login: testLogin();
+		UpvoteAnswer: testUpvoteAnswer();
+		DownvoteAnswer: testDownvoteAnswer();
+		UnvoteAnswer: testUnvoteAnswer();
+		UpvoteQuestion: testUpvoteQuestion();
+		DownvoteQuestion: testDownvoteQuestion();
+		UnvoteQuestion: testUnvoteQuestion();
 		
 end StackOverflowTest
