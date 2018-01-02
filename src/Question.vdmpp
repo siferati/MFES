@@ -27,7 +27,7 @@ class Question
 		public text: String;
 		
 		/** List of answers */
-		public answers: set of Answer := {};
+		public answers: seq of Answer := [];
 		
 		/** Score */
 		public score: int := 0;
@@ -105,16 +105,16 @@ class Question
 			dcl answer: Answer := new Answer(user, text);
 			
 			-- add question
-			answers := answers union {answer};
+			answers := answers^[answer];
 			
 			return answer;
 		)
 		pre  (
-			forall answer in set answers & answer.author in set StackOverflow`getInstance().users
+			forall answer in set elems answers & answer.author in set StackOverflow`getInstance().users
 		)
 		post (
-			card answers = card answers~ + 1 and
-			exists answer in set answers & (
+			len answers = len answers~ + 1 and
+			exists answer in set elems answers & (
 				answer.author = user and
 				answer.text = text
 		));

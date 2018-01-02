@@ -108,9 +108,8 @@ class StackOverflowTest
 			stackOverflow.login("user1", "pass1");
 			question1 := stackOverflow.addQuestion("title1","text1");
 			
-			
 			assertTrue(
-				question1 in set stackOverflow.questions
+				question1 in set elems stackOverflow.questions
 			);
 			
 		);
@@ -132,7 +131,7 @@ class StackOverflowTest
 			answer1 := question1.addAnswer(stackOverflow.loggedUser,"text1");
 			
 			assertTrue(
-				answer1 in set question1.answers
+				answer1 in set elems question1.answers
 			);
 		);
 		

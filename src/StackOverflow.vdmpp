@@ -18,7 +18,7 @@ class StackOverflow
 		public users: set of User := {};
 		
 		/** List of existing questions */
-		public questions: set of Question := {};
+		public questions: seq of Question := [];
 		
 		-- o.O?
 		private static stackoverflow: StackOverflow := new StackOverflow();
@@ -126,14 +126,14 @@ class StackOverflow
 		public clear: () ==> ()
 		clear() == (
 			users := {};
-			questions := {};
+			questions := [];
 			loggedUser := nil;
 			User`nextid := 1;
 			Answer`nextid := 1;
 			Question`nextid := 1;
 			
 		)
-		post (users = {} and questions = {} and loggedUser = nil);
+		post (users = {} and questions = [] and loggedUser = nil);
 		
 		
 		/**
@@ -173,23 +173,76 @@ class StackOverflow
 			dcl question: Question := new Question(loggedUser, title, text);
 			
 			-- add question
-			questions := questions union {question};
+			questions := questions^[question];
 			
 			return question;
 		)
 		pre  (
-			forall question in set questions & question.author in set users and
+			forall question in set elems questions & question.author in set users and
 			loggedUser <> nil
 
 		)
 		post (
-			card questions = card questions~ + 1 and
-			exists question in set questions & (
+			len questions = len questions~ + 1 and
+			exists question in set elems questions & (
 				question.author = loggedUser and
 				question.title = title and
 				question.text = text
 		));
 		
+		
+		/**
+		* Shows all questions and their respective answers
+		*
+		*
+		* @pre  At least one question exists
+		* @post 
+		*/
+		public showQuestionsAndAnswers: () ==> ()
+		showQuestionsAndAnswers() == (
+		
+		 dcl questionsTemp : seq of Question := questions;
+		 dcl answersTemp : seq of Answer;
+		 dcl questionTemp : Question;
+		 dcl answerTemp: Answer;
+		 dcl i : nat := 0;
+		 dcl j : nat := 0;	 
+		 dcl num : nat1 := 1;
+		 
+		 while i < len questionsTemp do (
+		 		i := i + 1;
+		 		questionTemp := questionsTemp(i);
+		 		
+				IO`print("\n");
+				IO`print(questionTemp.title);
+				IO`print("(");
+				IO`print(questionTemp.score);
+				IO`print("): \n ");
+				IO`print(questionTemp.text);
+				IO`print("\n");
+				
+				answersTemp := questionTemp.answers;
+				num := 1;
+				while j  < len answersTemp do (
+				
+				j := j + 1;
+				answerTemp := answersTemp(j);
+				
+				IO`print(num);
+				IO`print("(");
+				IO`print(answerTemp.score);
+				IO`print("): ");
+				IO`print(answerTemp.text);
+				IO`print("\n");
+				
+				num := num + 1;
+				)
+		 );
+		 
+		)
+		pre (
+			len questions > 0
+		);
 		
 		/**
 		* Upvotes the given answer
@@ -204,9 +257,9 @@ class StackOverflow
 		public upvoteAnswer: ID ==> ()
 		upvoteAnswer(id) == (
 		
-			for all question in set questions do (
+			for all question in set elems questions do (
 				
-				for all answer in set question.answers do (
+				for all answer in set elems question.answers do (
 					
 					if (answer.id = id) then (
 						
@@ -217,12 +270,12 @@ class StackOverflow
 		)
 		pre  (
 			loggedUser <> nil and
-			exists q in set questions & (
-				id in set {a.id | a in set q.answers}
+			exists q in set elems questions & (
+				id in set {a.id | a in set elems q.answers}
 			)
 		)
 		post (
-			questions \ {q | q in set questions & id in set {a.id | a in set q.answers}} = questions~ \ {q | q in set questions~ & id in set {a.id | a in set q.answers}} and
+			elems questions \ {q | q in set elems questions & id in set {a.id | a in set elems q.answers}} = elems questions~ \ {q | q in set elems questions~ & id in set {a.id | a in set elems q.answers}} and
 			loggedUser = loggedUser~
 		);
 		
@@ -240,9 +293,9 @@ class StackOverflow
 		public downvoteAnswer: ID ==> ()
 		downvoteAnswer(id) == (
 		
-			for all question in set questions do (
+			for all question in set elems questions do (
 				
-				for all answer in set question.answers do (
+				for all answer in set elems question.answers do (
 					
 					if (answer.id = id) then (
 						
@@ -253,12 +306,12 @@ class StackOverflow
 		)
 		pre  (
 			loggedUser <> nil and
-			exists q in set questions & (
-				id in set {a.id | a in set q.answers}
+			exists q in set elems questions & (
+				id in set {a.id | a in set elems q.answers}
 			)
 		)
 		post (
-			questions \ {q | q in set questions & id in set {a.id | a in set q.answers}} = questions~ \ {q | q in set questions~ & id in set {a.id | a in set q.answers}} and
+			elems questions \ {q | q in set elems questions & id in set {a.id | a in set elems q.answers}} = elems questions~ \ {q | q in set elems questions~ & id in set {a.id | a in set elems q.answers}} and
 			loggedUser = loggedUser~
 		);
 		
@@ -276,9 +329,9 @@ class StackOverflow
 		public unvoteAnswer: ID ==> ()
 		unvoteAnswer(id) == (
 		
-			for all question in set questions do (
+			for all question in set elems questions do (
 				
-				for all answer in set question.answers do (
+				for all answer in set elems question.answers do (
 					
 					if (answer.id = id) then (
 						
@@ -289,12 +342,12 @@ class StackOverflow
 		)
 		pre  (
 			loggedUser <> nil and
-			exists q in set questions & (
-				id in set {a.id | a in set q.answers}
+			exists q in set elems questions & (
+				id in set {a.id | a in set elems q.answers}
 			)
 		)
 		post (
-			questions \ {q | q in set questions & id in set {a.id | a in set q.answers}} = questions~ \ {q | q in set questions~ & id in set {a.id | a in set q.answers}} and
+			elems questions \ {q | q in set elems questions & id in set {a.id | a in set elems q.answers}} = elems questions~ \ {q | q in set elems questions~ & id in set {a.id | a in set elems q.answers}} and
 			loggedUser = loggedUser~
 		);
 		
@@ -312,7 +365,7 @@ class StackOverflow
 		public upvoteQuestion: ID ==> ()
 		upvoteQuestion(id) == (
 		
-			for all question in set questions do (
+			for all question in set elems questions do (
 				
 				if (question.id = id) then (
 					
@@ -322,10 +375,10 @@ class StackOverflow
 		)
 		pre  (
 			loggedUser <> nil and
-			exists q in set questions & (q.id = id)
+			exists q in set elems questions & (q.id = id)
 		)
 		post (
-			questions \ {q | q in set questions & q.id = id} = questions~ \ {q | q in set questions~ & q.id = id} and
+			elems questions \ {q | q in set elems questions & q.id = id} = elems questions~ \ {q | q in set elems questions~ & q.id = id} and
 			loggedUser = loggedUser~
 		);
 		
@@ -343,7 +396,7 @@ class StackOverflow
 		public downvoteQuestion: ID ==> ()
 		downvoteQuestion(id) == (
 		
-			for all question in set questions do (
+			for all question in set elems questions do (
 				
 				if (question.id = id) then (
 				
@@ -353,10 +406,10 @@ class StackOverflow
 		)
 		pre  (
 			loggedUser <> nil and
-			exists q in set questions & (q.id = id)
+			exists q in set elems questions & (q.id = id)
 		)
 		post (
-			questions \ {q | q in set questions & q.id = id} = questions~ \ {q | q in set questions~ & q.id = id} and
+			elems questions \ {q | q in set elems questions & q.id = id} = elems questions~ \ {q | q in set elems questions~ & q.id = id} and
 			loggedUser = loggedUser~
 		);
 		
@@ -374,7 +427,7 @@ class StackOverflow
 		public unvoteQuestion: ID ==> ()
 		unvoteQuestion(id) == (
 		
-			for all question in set questions do (
+			for all question in set elems questions do (
 				
 				if (question.id = id) then (
 					
@@ -384,10 +437,10 @@ class StackOverflow
 		)
 		pre  (
 			loggedUser <> nil and
-			exists q in set questions & (q.id = id)
+			exists q in set elems questions & (q.id = id)
 		)
 		post (
-			questions \ {q | q in set questions & q.id = id} = questions~ \ {q | q in set questions~ & q.id = id} and
+			elems questions \ {q | q in set elems questions & q.id = id} = elems questions~ \ {q | q in set elems questions~ & q.id = id} and
 			loggedUser = loggedUser~
 		);
 
