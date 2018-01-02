@@ -73,6 +73,27 @@ class StackOverflowTest
 			);
 		);
 		
+				
+		/**
+		* Test logout
+		*/
+		private testLogout: () ==> ()
+		testLogout() == (
+		
+			stackOverflow.clear();
+			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+		   
+		    stackOverflow.logout();
+		 -- stackOverflow.logout();
+			
+			assertTrue(
+				stackOverflow.loggedUser = nil
+			);
+		);
+		
+		
 		/**
 		* Test add Question
 		*/
@@ -274,6 +295,10 @@ class StackOverflowTest
 			soTest.testLogin();
 			IO`print("Success!");
 			
+			IO`print("\ntestLogout: ");
+			soTest.testLogout();
+			IO`print("Success!");
+			
 			IO`print("\ntestAddQuestion: ");
 			soTest.testAddQuestion();
 			IO`print("Success!");
@@ -314,6 +339,7 @@ class StackOverflowTest
 	
 		Signup: testSignup();
 		Login: testLogin();
+		Logout: testLogout();
 		UpvoteAnswer: testUpvoteAnswer();
 		DownvoteAnswer: testDownvoteAnswer();
 		UnvoteAnswer: testUnvoteAnswer();

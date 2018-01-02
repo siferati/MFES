@@ -104,6 +104,21 @@ class StackOverflow
 		
 		
 		/**
+		* Logs out the currently logged in user
+		*
+		* @pre  User must be logged in
+		* @post User logged out
+		*/
+		public logout: () ==> ()
+		logout() == (
+		
+			loggedUser := nil;
+		)
+		pre  (loggedUser <> nil)
+		post (loggedUser = nil);
+		
+		
+		/**
 		* Resets this instance
 		*
 		* @post There are no users and no questions
