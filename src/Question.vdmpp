@@ -8,7 +8,7 @@ class Question
 		/** String */
 		public String = seq of char;
 		
-		/** Question ID - starts at 1 */
+		/** Identifier (starts at 1) */
 		public ID = nat1;
 		
 		
@@ -20,25 +20,25 @@ class Question
 		/** Id of this question */
 		public id: ID;
 		
-		/** Title */
+		/** Title of this question */
 		public title: String;
 		
-		/** Text */
+		/** Body of this question */
 		public text: String;
 		
 		/** List of answers */
 		public answers: seq of Answer := [];
 		
-		/** Score */
+		/** Score of this question */
 		public score: int := 0;
 		
-		/** Set of users that have upvoted this answer */
+		/** Set of users that have upvoted this question */
 		public upvoters: set of User := {};
 		
-		/** Set of users that have downvoted this answer */
+		/** Set of users that have downvoted this question */
 		public downvoters: set of User := {};
 		
-		/** Author */
+		/** Author of this question */
 		public author: [User];
 
 		-- author cant be null
@@ -63,48 +63,54 @@ class Question
 			text := " ";
 			id := nextid;
 			nextid := nextid + 1;
+			
 			return self;
 		)
-		post (title = " " and text = " " and nextid = id + 1);
+		post (
+			title = " " and text = " " and nextid = id + 1
+		);
 		
-		/**
+		
+	 	/**
 		* Constructor
-		
-		* @param user Original Poster
-		* @param String Title
-		* @param String Text
 		*
-		* @pre Author exists
+		* @param user Author
+		* @param title1 Title
+		* @param text1 Body
+		*
 		* @post Question was created
 		*/
-		public Question: User*String*String ==> Question
-		Question(user,title1,text1) == (
+		public Question: User * String * String ==> Question
+		Question(user, title1, text1) == (
+		
 			author := user;
 			title := title1;
 			text := text1;
 			id := nextid;
 			nextid := nextid + 1;
+			
 			return self
 		)
-		post title = title1 and text = text1 and nextid = id + 1;
+		post (
+			title = title1 and text = text1 and nextid = id + 1
+		);
 		
 		
 		/**
-		* Creates a new Answer
+		* Adds an answer to this question
 		*
 		* @param user Author
-		* @param text Text
+		* @param text1 Body
 		*
-		* @pre  Author exists
-		* @post Answers was added to questions' set
+		* @post Answer was added
 		*/
 		public addAnswer: User * String ==> Answer
-		addAnswer(user, text) == (
+		addAnswer(user, text1) == (
 			
-			-- create question
-			dcl answer: Answer := new Answer(user, text);
+			-- create answer
+			dcl answer: Answer := new Answer(user, text1);
 			
-			-- add question
+			-- add answer
 			answers := answers^[answer];
 			
 			return answer;
@@ -113,8 +119,9 @@ class Question
 			len answers = len answers~ + 1 and
 			exists answer in set elems answers & (
 				answer.author = user and
-				answer.text = text
-		));
+				answer.text = text1
+			)
+		);
 		
 		
 		/**
@@ -123,9 +130,10 @@ class Question
 		* @param user User that upvoted this
 		*
 		* @pre  User hasn't upvoted this
+		*
 		* @post User upvoted this
 		* @post User hasn't downvoted this
-		* @post Score increased by one
+		* @post Score updated
 		*/
 		public upvote: User ==> ()
 		upvote(user) == (
@@ -149,7 +157,6 @@ class Question
 					-- update score
 					score := score + 1;
 				);
-	
 			);			
 		)
 		pre  (
@@ -168,16 +175,17 @@ class Question
 		* @param user User that downvoted this
 		*
 		* @pre  User hasn't downvoted this
+		*
 		* @post User downvoted this
 		* @post User hasn't upvoted this
-		* @post Score decreased by one
+		* @post Score updated
 		*/
 		public downvote: User ==> ()
 		downvote(user) == (
 			
 			atomic (
 				
-				-- add user to set of voters
+				-- add user to set of downvoters
 				downvoters := downvoters union {user};
 				
 				-- update score
@@ -207,11 +215,12 @@ class Question
 		
 		
 		/**
-		* Removes previously casted vote from this
+		* Removes previously casted vote from this question
 		*
 		* @param user User that unvoted this
 		*
 		* @pre  User has voted on this
+		*
 		* @post User hasn't upvoted this
 		* @post User hasn't downvoted this
 		* @post Score updated

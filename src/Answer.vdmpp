@@ -8,7 +8,7 @@ class Answer
 		/** String */
 		public String = seq of char;
 		
-		/** Answer ID - starts at 1 */
+		/** Identifier (starts at 1) */
 		public ID = nat1;
 		
 
@@ -20,10 +20,10 @@ class Answer
 		/** Id of this answer */
 		public id: ID;
 		
-		/** Text */
+		/** Body of this answer */
 		public text: String;
 		
-		/** Score */
+		/** Score of this answer */
 		public score: int := 0;
 		
 		/** Set of users that have upvoted this answer */
@@ -32,7 +32,7 @@ class Answer
 		/** Set of users that have downvoted this answer */
 		public downvoters: set of User := {};
 		
-		/** Author */
+		/** Author of this answer */
 		public author: [User];
 		
 		-- author cant be null
@@ -47,7 +47,7 @@ class Answer
 		/**
 		* Default Constructor
 		*
-		* @post Question was created
+		* @post Answer was created
 		*/
 		public Answer: () ==> Answer
 		Answer() == (
@@ -56,28 +56,35 @@ class Answer
 			text := " ";
 			id := nextid;
 			nextid := nextid + 1;
+			
 			return self;
 		)
-		post (text = " " and nextid = id + 1);
+		post (
+			text = " " and nextid = id + 1
+		);
 		
 		
 		/**
 		* Constructor
 		*
-		* @param user Original Poster
-		* @param String Text
+		* @param user Author
+		* @param text1 Body
 		*
-		* @pre author exists
+		* @post Answer was created
 		*/
-		public Answer: User*String ==> Answer
-		Answer(user,text1) == (
+		public Answer: User * String ==> Answer
+		Answer(user, text1) == (
+		
 			author := user;
 			text := text1;
 			id := nextid;
 			nextid := nextid + 1;
-			return self
+			
+			return self;
 		)
-		post text = text1 and nextid = id + 1;
+		post (
+			text = text1 and nextid = id + 1
+		);
 		
 		
 		/**
@@ -85,17 +92,18 @@ class Answer
 		*
 		* @param user User that upvoted this
 		*
-		* @pre  User hasn't upvoted this
+		* @pre User hasn't upvoted this
+		*
 		* @post User upvoted this
 		* @post User hasn't downvoted this
-		* @post Score increased by one
+		* @post Score updated
 		*/
 		public upvote: User ==> ()
 		upvote(user) == (
 			
 			atomic (
 			
-				-- add user to set of voters
+				-- add user to set of upvoters
 				upvoters := upvoters union {user};
 				
 				-- update score
@@ -112,7 +120,6 @@ class Answer
 					-- update score
 					score := score + 1;
 				);
-	
 			);			
 		)
 		pre  (
@@ -130,17 +137,18 @@ class Answer
 		*
 		* @param user User that downvoted this
 		*
-		* @pre  User hasn't downvoted this
+		* @pre User hasn't downvoted this
+		*
 		* @post User downvoted this
 		* @post User hasn't upvoted this
-		* @post Score decreased by one
+		* @post Score updated
 		*/
 		public downvote: User ==> ()
 		downvote(user) == (
 			
 			atomic (
 				
-				-- add user to set of voters
+				-- add user to set of downvoters
 				downvoters := downvoters union {user};
 				
 				-- update score
@@ -170,11 +178,12 @@ class Answer
 		
 		
 		/**
-		* Removes previously casted vote from this
+		* Removes previously casted vote from this answer
 		*
 		* @param user User that unvoted this
 		*
-		* @pre  User has voted on this
+		* @pre User has voted on this
+		*
 		* @post User hasn't upvoted this
 		* @post User hasn't downvoted this
 		* @post Score updated

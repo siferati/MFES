@@ -8,7 +8,7 @@ class StackOverflow
 		/** String */
 		public String = seq of char;
 		
-		/** Identifier (start at 1) */ 
+		/** Identifier (starts at 1) */ 
 		public ID = nat1;
 
 
