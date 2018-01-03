@@ -288,44 +288,15 @@ class StackOverflow
 		showQuestionsAndAnswers() == (
 		
 			dcl questionsTemp : seq of Question := questions;
-			dcl answersTemp : seq of Answer;
 		 	dcl questionTemp : Question;
-		 	dcl answerTemp: Answer;
 		 	dcl i : nat := 0;
-		 	dcl j : nat := 0;	 
-		 	dcl num : nat1 := 1;
 		 	dcl sum : nat := 0;
 		 
 		 	while i < len questionsTemp do (
 		 		i := i + 1;
 		 		questionTemp := questionsTemp(i);
 		 		
-				IO`print("\n");
-				IO`print(questionTemp.title);
-				IO`print("(");
-				IO`print(questionTemp.score);
-				IO`print("): \n ");
-				IO`print(questionTemp.text);
-				IO`print("\n");
-				sum := sum + 1;
-				
-				answersTemp := questionTemp.answers;
-				num := 1;
-				while j  < len answersTemp do (
-				
-					j := j + 1;
-					answerTemp := answersTemp(j);
-				
-					IO`print(num);
-					IO`print("(");
-					IO`print(answerTemp.score);
-					IO`print("): ");
-					IO`print(answerTemp.text);
-					IO`print("\n");
-					sum := sum + 1;
-				
-					num := num + 1;
-				)
+		 		sum := sum + showQuestion(questionTemp.id);
 			);
 		 
 			return sum;
