@@ -84,13 +84,7 @@ class StackOverflow
 		public login: String * String ==> ()
 		login(username, password) == (
 			
-			for all user in set users do (
-				
-				if (user.username = username and user.password = password) then (
-					
-					loggedUser := user;
-				);
-			);
+			loggedUser := iota user in set users & (user.username = username and user.password = password);
 		)
 		pre  (
 			loggedUser = nil and exists1 user in set users & (
@@ -265,17 +259,11 @@ class StackOverflow
 		*/
 		public upvoteAnswer: ID ==> ()
 		upvoteAnswer(id) == (
-		
-			for all question in set elems questions do (
-				
-				for all answer in set elems question.answers do (
-					
-					if (answer.id = id) then (
-						
-						answer.upvote(loggedUser);
-					);
-				);
-			);
+			
+			dcl question: Question := iota q in set elems questions & (id in set {a.id | a in set elems q.answers});
+			dcl answer: Answer := iota a in set elems question.answers & a.id = id;
+			
+			answer.upvote(loggedUser);
 		)
 		pre  (
 			loggedUser <> nil and
@@ -302,16 +290,10 @@ class StackOverflow
 		public downvoteAnswer: ID ==> ()
 		downvoteAnswer(id) == (
 		
-			for all question in set elems questions do (
-				
-				for all answer in set elems question.answers do (
-					
-					if (answer.id = id) then (
-						
-						answer.downvote(loggedUser);
-					);
-				);
-			);
+			dcl question: Question := iota q in set elems questions & (id in set {a.id | a in set elems q.answers});
+			dcl answer: Answer := iota a in set elems question.answers & a.id = id;
+			
+			answer.downvote(loggedUser);
 		)
 		pre  (
 			loggedUser <> nil and
@@ -338,16 +320,10 @@ class StackOverflow
 		public unvoteAnswer: ID ==> ()
 		unvoteAnswer(id) == (
 		
-			for all question in set elems questions do (
-				
-				for all answer in set elems question.answers do (
-					
-					if (answer.id = id) then (
-						
-						answer.unvote(loggedUser);
-					);
-				);
-			);
+			dcl question: Question := iota q in set elems questions & (id in set {a.id | a in set elems q.answers});
+			dcl answer: Answer := iota a in set elems question.answers & a.id = id;
+			
+			answer.unvote(loggedUser);
 		)
 		pre  (
 			loggedUser <> nil and
@@ -373,14 +349,10 @@ class StackOverflow
 		*/
 		public upvoteQuestion: ID ==> ()
 		upvoteQuestion(id) == (
-		
-			for all question in set elems questions do (
-				
-				if (question.id = id) then (
-					
-					question.upvote(loggedUser);
-				)
-			);
+			
+			dcl question: Question := iota q in set elems questions & q.id = id;
+			
+			question.upvote(loggedUser);
 		)
 		pre  (
 			loggedUser <> nil and
@@ -405,13 +377,9 @@ class StackOverflow
 		public downvoteQuestion: ID ==> ()
 		downvoteQuestion(id) == (
 		
-			for all question in set elems questions do (
-				
-				if (question.id = id) then (
-				
-					question.downvote(loggedUser);
-				)
-			);
+			dcl question: Question := iota q in set elems questions & q.id = id;
+			
+			question.downvote(loggedUser);
 		)
 		pre  (
 			loggedUser <> nil and
@@ -436,13 +404,9 @@ class StackOverflow
 		public unvoteQuestion: ID ==> ()
 		unvoteQuestion(id) == (
 		
-			for all question in set elems questions do (
-				
-				if (question.id = id) then (
-					
-					question.unvote(loggedUser);
-				)
-			);
+			dcl question: Question := iota q in set elems questions & q.id = id;
+			
+			question.unvote(loggedUser);
 		)
 		pre  (
 			loggedUser <> nil and
