@@ -27,6 +27,25 @@ class StackOverflowTest
 		
 		
 		/**
+		* Test Default Constructors
+		*/
+		private testDefaultConstructors: () ==> ()
+		testDefaultConstructors() == (
+		
+			-- test
+			dcl answer: [Answer] := new Answer();
+			dcl question: [Question] := new Question();
+			dcl user: [User] := new User();
+			
+			assertTrue(
+				answer <> nil and
+				question <> nil and
+				user <> nil
+			);
+		);
+		
+		
+		/**
 		* Test signup
 		*/
 		private testSignup: () ==> ()
@@ -37,12 +56,12 @@ class StackOverflowTest
 			
 			-- test
 			stackOverflow.signup("user1", "pass1");
-		 -- stackOverflow.signup("user1", "pass2");
+			stackOverflow.signup("user2", "pass2");
+		 -- stackOverflow.signup("user1", "pass3");
 			
 			assertTrue(exists1 user in set stackOverflow.users & (
 				user.username = "user1" and
-				user.password = "pass1" and
-				user.id = User`nextid - 1
+				user.password = "pass1"
 			));
 		);
 		
@@ -355,7 +374,11 @@ class StackOverflowTest
 			
 			IO`print("\n--- TESTING ---\n");
 			
-			IO`print("testSignup: ");
+			IO`print("testDefaultConstructors: ");
+			soTest.testDefaultConstructors();
+			IO`print("Success!");
+			
+			IO`print("\ntestSignup: ");
 			soTest.testSignup();
 			IO`print("Success!");
 			
