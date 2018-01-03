@@ -14,14 +14,11 @@ class StackOverflow
 
 	instance variables
 		
-		/** List of existing users */
+		/** Set of existing users */
 		public users: set of User := {};
 		
 		/** List of existing questions */
 		public questions: seq of Question := [];
-		
-		-- o.O?
-		private static stackoverflow: StackOverflow := new StackOverflow();
 		
 		/** The user that's currently logged in */
 		public loggedUser: [User] := nil;
@@ -36,9 +33,14 @@ class StackOverflow
 		*/
 		public StackOverflow: () ==> StackOverflow
 		StackOverflow() == (
+		
 			return self;
 		)
-		post users = {};
+		post (
+			users = {} and
+			questions = [] and
+			loggedUser = nil
+		);
 		
 		
 		/**
@@ -47,8 +49,9 @@ class StackOverflow
 		* @param username Username
 		* @param password Password
 		*
-		* @pre  Username is unique
-		* @post User was added to users' set
+		* @pre Username is unique
+		*
+		* @post User was created
 		*/
 		public signup: String * String ==> ()
 		signup(username, password) == (
@@ -68,7 +71,8 @@ class StackOverflow
 				user.username = username and
 				user.password = password and
 				user.id = User`nextid - 1
-		));
+			)
+		);
 		
 		
 		/**
@@ -77,8 +81,9 @@ class StackOverflow
 		* @param username Username
 		* @param password Password
 		*
-		* @pre  There isn't an user already logged in
-		* @pre  Username and password are a match
+		* @pre There isn't an user already logged in
+		* @pre Username and password are a match
+		*
 		* @post User logged in
 		*/
 		public login: String * String ==> ()
@@ -87,20 +92,22 @@ class StackOverflow
 			loggedUser := iota user in set users & (user.username = username and user.password = password);
 		)
 		pre  (
-			loggedUser = nil and exists1 user in set users & (
-			user.username = username and
-			user.password = password
-		))
+			loggedUser = nil and
+			exists1 user in set users & (
+				user.username = username and
+				user.password = password
+			)
+		)
 		post (
-			loggedUser.username = username and
-			loggedUser.password = password
+			loggedUser.username = username and loggedUser.password = password
 		);
 		
 		
 		/**
 		* Logs out the currently logged in user
 		*
-		* @pre  User must be logged in
+		* @pre User must be logged in
+		*
 		* @post User logged out
 		*/
 		public logout: () ==> ()
@@ -108,57 +115,50 @@ class StackOverflow
 		
 			loggedUser := nil;
 		)
-		pre  (loggedUser <> nil)
-		post (loggedUser = nil);
+		pre  (
+			loggedUser <> nil
+		)
+		post (
+			loggedUser = nil
+		);
 		
 		
 		/**
 		* Resets this instance
 		*
-		* @post There are no users and no questions
+		* @post StackOverflow was cleared
 		*/
 		public clear: () ==> ()
 		clear() == (
+		
 			users := {};
 			questions := [];
 			loggedUser := nil;
+			
+			-- reset static IDs
 			User`nextid := 1;
 			Answer`nextid := 1;
 			Question`nextid := 1;
 			
 		)
-		post (users = {} and questions = [] and loggedUser = nil);
-		
-		
-		/**
-		* Returns the existent instance
-		*/
-		public pure static getInstance: () ==> StackOverflow
-		getInstance() == (
-			return stackoverflow;
+		post (
+			users = {} and questions = [] and loggedUser = nil
 		);
-		
-		
-		/**
-		* Resets the instance
-		*/
-		public static clearInstance: () ==> StackOverflow
-		clearInstance() == (
-			stackoverflow := new StackOverflow();
-			return getInstance();
-		)
-		post RESULT.users = {};
 
 
 		/**
-		* Creates a new question
+		* Adds a new question
 		*
 		* @param user Author
 		* @param title Title
-		* @param text Text
+		* @param text Body
 		*
-		* @pre  Author exists
-		* @post Question was added to questions' set
+		* @return Added question
+		*
+		* @pre User is logged in
+		*
+		* @post Question was added
+		* @post User stays logged in
 		*/
 		public addQuestion: String * String ==> Question
 		addQuestion(title, text) == (
@@ -172,26 +172,28 @@ class StackOverflow
 			return question;
 		)
 		pre  (
-			forall question in set elems questions & question.author in set users and
 			loggedUser <> nil
-
 		)
 		post (
-			loggedUser = loggedUser~ and
 			len questions = len questions~ + 1 and
 			exists question in set elems questions & (
 				question.author = loggedUser and
 				question.title = title and
 				question.text = text
-		));
+			) and
+			loggedUser = loggedUser~
+		);
 		
 		
 		/**
 		* Shows all questions and their respective answers
 		*
+		* @return Number of questions-answers shown
 		*
-		* @pre  At least one question exists
-		* @post The user remains logged in and the questions seq remains the same
+		* @pre At least one question exists
+		*
+		* @post No changes were made
+		* @post User stays logged in
 		*/
 		public showQuestionsAndAnswers: () ==> nat
 		showQuestionsAndAnswers() == (
@@ -239,7 +241,7 @@ class StackOverflow
 		 
 		 return sum;
 		)
-		pre (
+		pre  (
 			len questions > 0
 		)
 		post (
@@ -247,22 +249,28 @@ class StackOverflow
 			loggedUser = loggedUser~
 		);
 		
+		
 		/**
 		* Upvotes the given answer
 		*
 		* @param id Answer to upvote
 		*
-		* @pre  User is logged in
-		* @pre  Answer to upvote exists
+		* @pre User is logged in
+		* @pre Answer to upvote exists
+		*
 		* @post No changes were made to other answers
 		* @post User stays logged in
 		*/
 		public upvoteAnswer: ID ==> ()
 		upvoteAnswer(id) == (
 			
+			-- get answer's parent
 			dcl question: Question := iota q in set elems questions & (id in set {a.id | a in set elems q.answers});
+			
+			-- get answer
 			dcl answer: Answer := iota a in set elems question.answers & a.id = id;
 			
+			-- upvote
 			answer.upvote(loggedUser);
 		)
 		pre  (
@@ -282,17 +290,22 @@ class StackOverflow
 		*
 		* @param id Answer to downvote
 		*
-		* @pre  User is logged in
-		* @pre  Answer to downvote exists
+		* @pre User is logged in
+		* @pre Answer to downvote exists
+		*
 		* @post No changes were made to other answers
 		* @post User stays logged in
 		*/
 		public downvoteAnswer: ID ==> ()
 		downvoteAnswer(id) == (
-		
+			
+			-- get answer's parent
 			dcl question: Question := iota q in set elems questions & (id in set {a.id | a in set elems q.answers});
+			
+			-- get answer
 			dcl answer: Answer := iota a in set elems question.answers & a.id = id;
 			
+			-- downvote
 			answer.downvote(loggedUser);
 		)
 		pre  (
@@ -308,21 +321,26 @@ class StackOverflow
 		
 		
 		/**
-		* Unvoted the given answer
+		* Unvotes the given answer
 		*
 		* @param id Answer to unvote
 		*
-		* @pre  User is logged in
-		* @pre  Answer to unvote exists
+		* @pre User is logged in
+		* @pre Answer to unvote exists
+		*
 		* @post No changes were made to other answers
 		* @post User stays logged in
 		*/
 		public unvoteAnswer: ID ==> ()
 		unvoteAnswer(id) == (
 		
+			-- get answer's parent
 			dcl question: Question := iota q in set elems questions & (id in set {a.id | a in set elems q.answers});
+			
+			-- get answer
 			dcl answer: Answer := iota a in set elems question.answers & a.id = id;
 			
+			-- unvote
 			answer.unvote(loggedUser);
 		)
 		pre  (
@@ -342,16 +360,19 @@ class StackOverflow
 		*
 		* @param id Question to upvote
 		*
-		* @pre  User is logged in
-		* @pre  Question to upvote exists
+		* @pre User is logged in
+		* @pre Question to upvote exists
+		*
 		* @post No changes were made to other questions
 		* @post User stays logged in
 		*/
 		public upvoteQuestion: ID ==> ()
 		upvoteQuestion(id) == (
 			
+			-- get question
 			dcl question: Question := iota q in set elems questions & q.id = id;
 			
+			-- upvote
 			question.upvote(loggedUser);
 		)
 		pre  (
@@ -369,16 +390,19 @@ class StackOverflow
 		*
 		* @param id Question to downvote
 		*
-		* @pre  User is logged in
-		* @pre  Question to downvote exists
+		* @pre User is logged in
+		* @pre Question to downvote exists
+		*
 		* @post No changes were made to other answers
 		* @post User stays logged in
 		*/
 		public downvoteQuestion: ID ==> ()
 		downvoteQuestion(id) == (
 		
+			-- get question
 			dcl question: Question := iota q in set elems questions & q.id = id;
 			
+			-- downvote
 			question.downvote(loggedUser);
 		)
 		pre  (
@@ -396,16 +420,19 @@ class StackOverflow
 		*
 		* @param id Question to unvote
 		*
-		* @pre  User is logged in
-		* @pre  Question to unvote exists
+		* @pre User is logged in
+		* @pre Question to unvote exists
+		*
 		* @post No changes were made to other questions
 		* @post User stays logged in
 		*/
 		public unvoteQuestion: ID ==> ()
 		unvoteQuestion(id) == (
 		
+			-- get question
 			dcl question: Question := iota q in set elems questions & q.id = id;
 			
+			-- unvote
 			question.unvote(loggedUser);
 		)
 		pre  (

@@ -1,7 +1,7 @@
 /**
 * This class is used for testing purposes.
 *
-* Commented lines are examples that break pre-conditions,
+* Commented lines are examples that break pre-conditions or post-conditions,
 * and therefore cannot be executed.
 */
 class StackOverflowTest

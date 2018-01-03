@@ -129,7 +129,7 @@ class Question
 		*
 		* @param user User that upvoted this
 		*
-		* @pre  User hasn't upvoted this
+		* @pre User hasn't upvoted this
 		*
 		* @post User upvoted this
 		* @post User hasn't downvoted this
@@ -174,7 +174,7 @@ class Question
 		*
 		* @param user User that downvoted this
 		*
-		* @pre  User hasn't downvoted this
+		* @pre User hasn't downvoted this
 		*
 		* @post User downvoted this
 		* @post User hasn't upvoted this
@@ -219,7 +219,7 @@ class Question
 		*
 		* @param user User that unvoted this
 		*
-		* @pre  User has voted on this
+		* @pre User has voted on this
 		*
 		* @post User hasn't upvoted this
 		* @post User hasn't downvoted this
