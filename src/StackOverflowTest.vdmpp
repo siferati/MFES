@@ -202,7 +202,7 @@ class StackOverflowTest
 			dcl question: Question;
 			dcl answer: Answer;
 			
-			-- requirements
+			-- requirements #1
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
@@ -212,9 +212,15 @@ class StackOverflowTest
 			stackOverflow.downvoteAnswer(1);
 			stackOverflow.upvoteAnswer(1);
 			
-			-- test
+			-- test #1
 			stackOverflow.unvoteAnswer(1);
 		--  stackOverflow.unvoteAnswer(2);
+			
+			-- requirements #2
+			stackOverflow.downvoteAnswer(1);
+			
+			-- test #2
+			stackOverflow.unvoteAnswer(1);
 			
 			assertTrue(
 				answer.score = 0
@@ -281,7 +287,7 @@ class StackOverflowTest
 			-- variables
 			dcl question: Question;
 			
-			-- requirements
+			-- requirements #1
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
@@ -290,10 +296,16 @@ class StackOverflowTest
 			stackOverflow.downvoteQuestion(1);
 			stackOverflow.upvoteQuestion(1);
 			
-			-- test
+			-- test #1
 			stackOverflow.unvoteQuestion(1);
 		--  stackOverflow.unvoteQuestion(2);
+		
+			-- requirements #2
+			stackOverflow.downvoteQuestion(1);
 			
+			-- test #2
+			stackOverflow.unvoteQuestion(1);
+		
 			assertTrue(
 				question.score = 0
 			);
@@ -393,21 +405,5 @@ class StackOverflowTest
 		
 			IO`print("\n--- TESTING ---\n");
 		);
-		
-	
-	traces -- this is used for the pretty UI, not for the combinatorial testing
-	
-		Signup: testSignup();
-		Login: testLogin();
-		Logout: testLogout();
-		AddQuestion: testAddQuestion();
-		AddAnswer: testAddAnswer();
-		UpvoteAnswer: testUpvoteAnswer();
-		DownvoteAnswer: testDownvoteAnswer();
-		UnvoteAnswer: testUnvoteAnswer();
-		UpvoteQuestion: testUpvoteQuestion();
-		DownvoteQuestion: testDownvoteQuestion();
-		UnvoteQuestion: testUnvoteQuestion();
-		ShowQuestionsAndAnswers: testShowQuestionsAndAnswers();
 		
 end StackOverflowTest
