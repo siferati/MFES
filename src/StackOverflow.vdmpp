@@ -214,6 +214,67 @@ class StackOverflow
 		
 		
 		/**
+		* Shows given question and its answers
+		*
+		* @param id Question to show
+		*
+		* @return Number of questions-answers shown
+		*
+		* @pre At least one question exists
+		*
+		* @post No changes were made
+		* @post User stays logged in
+		*/
+		public showQuestion: ID ==> nat
+		showQuestion(id) == (
+		
+			dcl answersTemp : seq of Answer;
+		 	dcl answerTemp: Answer;
+		 	dcl j : nat := 0;	 
+		 	dcl num : nat1 := 1;
+		 	dcl sum : nat := 0;
+		 
+			dcl questionTemp: Question := iota q in set elems questions & q.id = id;
+		 		
+			IO`print("\n");
+			IO`print(questionTemp.title);
+			IO`print("(");
+			IO`print(questionTemp.score);
+			IO`print("): \n ");
+			IO`print(questionTemp.text);
+			IO`print("\n");
+			sum := sum + 1;
+			
+			answersTemp := questionTemp.answers;
+			num := 1;
+			while j  < len answersTemp do (
+			
+				j := j + 1;
+				answerTemp := answersTemp(j);
+			
+				IO`print(num);
+				IO`print("(");
+				IO`print(answerTemp.score);
+				IO`print("): ");
+				IO`print(answerTemp.text);
+				IO`print("\n");
+				sum := sum + 1;
+			
+				num := num + 1;
+			);
+		 
+			return sum;
+		)
+		pre  (
+			len questions > 0
+		)
+		post (
+			questions = questions~ and
+			loggedUser = loggedUser~
+		);
+		
+		
+		/**
 		* Shows all questions and their respective answers
 		*
 		* @return Number of questions-answers shown
@@ -226,16 +287,16 @@ class StackOverflow
 		public showQuestionsAndAnswers: () ==> nat
 		showQuestionsAndAnswers() == (
 		
-		 dcl questionsTemp : seq of Question := questions;
-		 dcl answersTemp : seq of Answer;
-		 dcl questionTemp : Question;
-		 dcl answerTemp: Answer;
-		 dcl i : nat := 0;
-		 dcl j : nat := 0;	 
-		 dcl num : nat1 := 1;
-		 dcl sum : nat := 0;
+			dcl questionsTemp : seq of Question := questions;
+			dcl answersTemp : seq of Answer;
+		 	dcl questionTemp : Question;
+		 	dcl answerTemp: Answer;
+		 	dcl i : nat := 0;
+		 	dcl j : nat := 0;	 
+		 	dcl num : nat1 := 1;
+		 	dcl sum : nat := 0;
 		 
-		 while i < len questionsTemp do (
+		 	while i < len questionsTemp do (
 		 		i := i + 1;
 		 		questionTemp := questionsTemp(i);
 		 		
@@ -252,22 +313,22 @@ class StackOverflow
 				num := 1;
 				while j  < len answersTemp do (
 				
-				j := j + 1;
-				answerTemp := answersTemp(j);
+					j := j + 1;
+					answerTemp := answersTemp(j);
 				
-				IO`print(num);
-				IO`print("(");
-				IO`print(answerTemp.score);
-				IO`print("): ");
-				IO`print(answerTemp.text);
-				IO`print("\n");
-				sum := sum + 1;
+					IO`print(num);
+					IO`print("(");
+					IO`print(answerTemp.score);
+					IO`print("): ");
+					IO`print(answerTemp.text);
+					IO`print("\n");
+					sum := sum + 1;
 				
-				num := num + 1;
+					num := num + 1;
 				)
-		 );
+			);
 		 
-		 return sum;
+			return sum;
 		)
 		pre  (
 			len questions > 0

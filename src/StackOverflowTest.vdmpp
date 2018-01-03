@@ -363,6 +363,31 @@ class StackOverflowTest
 		);
 		
 		
+		/**
+		* Test showQuestion
+		*/
+		private testShowQuestion: () ==> ()
+		testShowQuestion() == (
+			
+			-- variables
+			dcl num: nat;
+			
+			-- requirements
+			stackOverflow.clear();			
+			stackOverflow.signup("user1", "pass1");
+			stackOverflow.login("user1", "pass1");
+			stackOverflow.addQuestion("title1","question1");
+			stackOverflow.addAnswer(1,"text1");
+			stackOverflow.addAnswer(1,"text2");
+			
+			-- test
+			num := stackOverflow.showQuestion(1);
+			
+			assertTrue(
+				num = 3
+			);
+		);
+		
 		
 		/**
 		* Run all tests
@@ -424,6 +449,10 @@ class StackOverflowTest
 			
 			IO`print("\ntestShowQuestionsAndAnswers: ");
 			soTest.testShowQuestionsAndAnswers();
+			IO`print("Success!");
+			
+			IO`print("\ntestShowQuestion: ");
+			soTest.testShowQuestion();
 			IO`print("Success!");
 		
 			IO`print("\n--- TESTING ---\n");
