@@ -153,14 +153,12 @@ class StackOverflow
 		* @param title Title
 		* @param text Body
 		*
-		* @return Added question
-		*
 		* @pre User is logged in
 		*
 		* @post Question was added
 		* @post User stays logged in
 		*/
-		public addQuestion: String * String ==> Question
+		public addQuestion: String * String ==> ()
 		addQuestion(title, text) == (
 			
 			-- create question
@@ -168,8 +166,6 @@ class StackOverflow
 			
 			-- add question
 			questions := questions^[question];
-			
-			return question;
 		)
 		pre  (
 			loggedUser <> nil
@@ -181,6 +177,38 @@ class StackOverflow
 				question.title = title and
 				question.text = text
 			) and
+			loggedUser = loggedUser~
+		);
+		
+		
+		/**
+		* Adds an answer to given question
+		*
+		* @param id Parent question
+		* @param text1 Body
+		*
+		* @pre User is logged in
+		* @pre Question to reply to exists
+		*
+		* @post No changes were made to other questions
+		* @post User stays logged in
+		*/
+		public addAnswer: ID * String ==> ()
+		addAnswer(id, text) == (
+			
+			-- get question
+			dcl question: Question := iota q in set elems questions & q.id = id;
+			
+			-- add answer
+			dcl answer: Answer;
+			answer := question.addAnswer(loggedUser, text);
+		)
+		pre  (
+			loggedUser <> nil and
+			exists q in set elems questions & (q.id = id)
+		)
+		post (
+			elems questions \ {q | q in set elems questions & q.id = id} = elems questions~ \ {q | q in set elems questions~ & q.id = id} and
 			loggedUser = loggedUser~
 		);
 		

@@ -113,9 +113,6 @@ class StackOverflowTest
 		*/
 		private testAddQuestion: () ==> ()
 		testAddQuestion() == (
-		
-			-- variables
-			dcl question: Question;
 			
 			-- requirements
 			stackOverflow.clear();			
@@ -123,10 +120,14 @@ class StackOverflowTest
 			stackOverflow.login("user1", "pass1");
 			
 			-- test
-			question := stackOverflow.addQuestion("title1","text1");
+			stackOverflow.addQuestion("title1","text1");
 			
 			assertTrue(
-				question in set elems stackOverflow.questions
+				exists1 q in set elems stackOverflow.questions & (
+					q.id = 1 and
+					q.title = "title1" and
+					q.text = "text1"
+				)
 			);
 			
 		);
@@ -137,22 +138,22 @@ class StackOverflowTest
 		*/
 		private testAddAnswer: () ==> ()
 		testAddAnswer() == (
-		
-			-- variables
-			dcl question: Question;
-			dcl answer: Answer;
 			
 			-- requirements
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question := stackOverflow.addQuestion("title1","text1");
+			stackOverflow.addQuestion("title1","text1");
 			
 			-- test
-			answer := question.addAnswer(stackOverflow.loggedUser,"text1");
+			stackOverflow.addAnswer(1, "text1");
 			
 			assertTrue(
-				answer in set elems question.answers
+				exists1 q in set elems stackOverflow.questions & (q.id = 1) and
+				exists1 a in set elems q.answers & (
+					a.id = 1 and
+					a.text = "text1"
+				)
 			);
 		);
 		
@@ -163,23 +164,23 @@ class StackOverflowTest
 		private testUpvoteAnswer: () ==> ()
 		testUpvoteAnswer() == (
 			
-			-- variables
-			dcl question: Question;
-			dcl answer: Answer;
-			
 			-- requirements
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question := stackOverflow.addQuestion("title1","question1");
-			answer := question.addAnswer(stackOverflow.loggedUser,"answer1");
+			stackOverflow.addQuestion("title1","question1");
+			stackOverflow.addAnswer(1, "answer1");
 			
 			-- test
 			stackOverflow.upvoteAnswer(1);
 		--  stackOverflow.upvoteAnswer(2);
 			
 			assertTrue(
-				answer.score = 1
+				exists1 q in set elems stackOverflow.questions & (q.id = 1) and
+				exists1 a in set elems q.answers & (
+					a.id = 1 and
+					a.score = 1
+				)
 			);
 		);
 		
@@ -190,23 +191,24 @@ class StackOverflowTest
 		private testDownvoteAnswer: () ==> ()
 		testDownvoteAnswer() == (
 			
-			-- variables
-			dcl question: Question;
-			dcl answer: Answer;
-			
 			-- requirements
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question := stackOverflow.addQuestion("title1","question1");
-			answer := question.addAnswer(stackOverflow.loggedUser,"answer1");
+			stackOverflow.addQuestion("title1","question1");
+			stackOverflow.addAnswer(1,"answer1");
 			
 			-- test
 			stackOverflow.downvoteAnswer(1);
 		--  stackOverflow.downvoteAnswer(2);
 			
 			assertTrue(
-				answer.score = -1
+				exists1 q in set elems stackOverflow.questions & (q.id = 1) and
+				exists1 a in set elems q.answers & (
+					a.id = 1 and
+					a.score = -1
+				)
+
 			);
 		);
 		
@@ -217,16 +219,12 @@ class StackOverflowTest
 		private testUnvoteAnswer: () ==> ()
 		testUnvoteAnswer() == (
 			
-			-- variables
-			dcl question: Question;
-			dcl answer: Answer;
-			
 			-- requirements #1
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question := stackOverflow.addQuestion("title1","question1");
-			answer := question.addAnswer(stackOverflow.loggedUser,"answer1");
+			stackOverflow.addQuestion("title1","question1");
+			stackOverflow.addAnswer(1,"answer1");
 			stackOverflow.upvoteAnswer(1);
 			stackOverflow.downvoteAnswer(1);
 			stackOverflow.upvoteAnswer(1);
@@ -242,7 +240,12 @@ class StackOverflowTest
 			stackOverflow.unvoteAnswer(1);
 			
 			assertTrue(
-				answer.score = 0
+				exists1 q in set elems stackOverflow.questions & (q.id = 1) and
+				exists1 a in set elems q.answers & (
+					a.id = 1 and
+					a.score = 0
+				)
+
 			);
 		);
 		
@@ -253,21 +256,21 @@ class StackOverflowTest
 		private testUpvoteQuestion: () ==> ()
 		testUpvoteQuestion() == (
 			
-			-- variables
-			dcl question: Question;
-			
 			-- requirements
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question := stackOverflow.addQuestion("title1","question1");
+			stackOverflow.addQuestion("title1","question1");
 			
 			-- test
 			stackOverflow.upvoteQuestion(1);
 		--  stackOverflow.upvoteAnswer(2);
 			
 			assertTrue(
-				question.score = 1
+				exists1 q in set elems stackOverflow.questions & (
+					q.id = 1 and
+					q.score = 1
+				)
 			);
 		);
 		
@@ -278,21 +281,21 @@ class StackOverflowTest
 		private testDownvoteQuestion: () ==> ()
 		testDownvoteQuestion() == (
 			
-			-- variables
-			dcl question: Question;
-			
 			-- requirements
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question := stackOverflow.addQuestion("title1","question1");
+			stackOverflow.addQuestion("title1","question1");
 			
 			-- test
 			stackOverflow.downvoteQuestion(1);
 		--  stackOverflow.downvoteAnswer(2);
 			
 			assertTrue(
-				question.score = -1
+				exists1 q in set elems stackOverflow.questions & (
+					q.id = 1 and
+					q.score = -1
+				)
 			);
 		);
 		
@@ -302,15 +305,12 @@ class StackOverflowTest
 		*/
 		private testUnvoteQuestion: () ==> ()
 		testUnvoteQuestion() == (
-		
-			-- variables
-			dcl question: Question;
 			
 			-- requirements #1
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question := stackOverflow.addQuestion("title1","question1");
+			stackOverflow.addQuestion("title1","question1");
 			stackOverflow.upvoteQuestion(1);
 			stackOverflow.downvoteQuestion(1);
 			stackOverflow.upvoteQuestion(1);
@@ -326,7 +326,10 @@ class StackOverflowTest
 			stackOverflow.unvoteQuestion(1);
 		
 			assertTrue(
-				question.score = 0
+				exists1 q in set elems stackOverflow.questions & (
+					q.id = 1 and
+					q.score = 0
+				)
 			);
 		);
 		
@@ -338,18 +341,15 @@ class StackOverflowTest
 		testShowQuestionsAndAnswers() == (
 			
 			-- variables
-			dcl question: Question;
-			dcl answer1: Answer;
-			dcl answer2: Answer;
 			dcl num: nat;
 			
 			-- requirements
 			stackOverflow.clear();			
 			stackOverflow.signup("user1", "pass1");
 			stackOverflow.login("user1", "pass1");
-			question := stackOverflow.addQuestion("title1","question1");
-			answer1 := question.addAnswer(stackOverflow.loggedUser,"text1");
-			answer2 := question.addAnswer(stackOverflow.loggedUser,"text2");
+			stackOverflow.addQuestion("title1","question1");
+			stackOverflow.addAnswer(1,"text1");
+			stackOverflow.addAnswer(1,"text2");
 			stackOverflow.upvoteQuestion(1);
 			stackOverflow.upvoteAnswer(1);
 			stackOverflow.downvoteAnswer(2);
